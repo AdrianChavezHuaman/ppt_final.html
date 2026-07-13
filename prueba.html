@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotización · Grupo04 CCTV PoE</title>
+    <style>
+        :root {
+            --deep-blue: #0a1a2b;
+            --dark-slate: #132a3f;
+            --accent-gold: #f0b34b;
+            --accent-teal: #2ec4b6;
+            --soft-gray: #f8fafd;
+            --border-light: #e2e9f3;
+            --text-primary: #1e2f40;
+            --text-secondary: #4b5e71;
+            --card-shadow: 0 8px 24px rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #eef3fa;
+            color: var(--text-primary);
+            line-height: 1.6;
+            padding: 1.5rem 0.8rem;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .cotizacion {
+            max-width: 1000px;
+            width: 100%;
+            background: #ffffff;
+            border-radius: 1.8rem;
+            box-shadow: 0 20px 50px rgba(10, 26, 43, 0.15);
+            overflow: hidden;
+        }
+
+        /* ----- HEADER ----- */
+        .header {
+            background: var(--deep-blue);
+            background-image: linear-gradient(135deg, #0f2335 0%, #0a1a2b 100%);
+            color: white;
+            padding: 2rem 2rem 1.8rem;
+            position: relative;
+        }
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-gold), #e5942c, var(--accent-teal));
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        .header-left h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .header-left .tagline {
+            font-size: 1rem;
+            color: #cbd8e8;
+            font-weight: 400;
+        }
+        .badge {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            backdrop-filter: blur(8px);
+            padding: 0.5rem 1.2rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.8rem;
+            color: #fadf9e;
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .meta {
+            color: #a0bcd4;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        /* ----- SECTIONS ----- */
+        .section {
+            padding: 1.8rem 2rem;
+            border-bottom: 1px solid var(--border-light);
+        }
+        .section:last-of-type {
+            border-bottom: none;
+        }
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 650;
+            color: var(--dark-slate);
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* ----- TOPOLOGÍA GRÁFICA (RedHuaman) ----- */
+        .topologia-grafica {
+            background: #f4f8fe;
+            border-radius: 1.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #dce6f2;
+            overflow-x: auto;
+        }
+        .network-diagram {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.6rem;
+            font-family: 'Inter', sans-serif;
+            min-width: 600px;
+        }
+        .device {
+            background: white;
+            border-radius: 1rem;
+            padding: 0.8rem 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            min-width: 80px;
+            border: 1px solid #e2ebf7;
+            transition: transform 0.2s;
+        }
+        .device-icon {
+            font-size: 1.8rem;
+            margin-bottom: 0.2rem;
+        }
+        .device-label {
+            font-weight: 650;
+            color: #132a3f;
+            font-size: 0.8rem;
+        }
+        .device-sub {
+            font-size: 0.65rem;
+            color: #5e7188;
+        }
+        .connector {
+            display: flex;
+            align-items: center;
+            font-size: 1.2rem;
+            color: #8aa0bc;
+        }
+        .connector-line {
+            width: 30px;
+            height: 2px;
+            background: #cbd6e5;
+            margin: 0 2px;
+            position: relative;
+        }
+        .connector-line::after {
+            content: '';
+            position: absolute;
+            right: -4px;
+            top: -3px;
+            border: 4px solid transparent;
+            border-left: 6px solid #8aa0bc;
+        }
+        .camaras-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* ----- TABLAS ----- */
+        .tabla-wrapper {
+            overflow-x: auto;
+            border-radius: 1rem;
+            border: 1px solid #e6edf6;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            min-width: 650px;
+        }
+        th {
+            background: #f1f7fe;
+            color: #1a3247;
+            font-weight: 650;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            letter-spacing: 0.5px;
+            padding: 0.8rem 0.8rem;
+            text-align: left;
+            border-bottom: 2px solid #d3dfee;
+        }
+        td {
+            padding: 0.75rem 0.8rem;
+            border-bottom: 1px solid #edf2f9;
+            color: #2d4055;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .precio {
+            font-weight: 600;
+            color: #0f2c41;
+        }
+        .subtotal {
+            font-weight: 650;
+            color: #1d6b4c;
+        }
+        .total-row {
+            background: #f0f5fd;
+            font-weight: 700;
+            font-size: 0.95rem;
+            border-top: 3px solid #c7d5e9;
+        }
+
+        /* ----- UPS OPCIONAL ----- */
+        .opcional-bloque {
+            background: #fffbee;
+            border: 1px dashed #e6c764;
+            border-radius: 1rem;
+            padding: 1rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        /* ----- SERVICIOS ----- */
+        .servicios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1rem;
+            margin-top: 0.8rem;
+        }
+        .servicio-card {
+            background: #fafcff;
+            border-radius: 1rem;
+            padding: 1rem;
+            border-left: 4px solid var(--accent-gold);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+        .servicio-card h4 {
+            font-weight: 650;
+            color: var(--dark-slate);
+            margin-bottom: 0.4rem;
+            font-size: 0.9rem;
+        }
+        .servicio-card p {
+            font-size: 0.8rem;
+            color: #44566c;
+        }
+
+        /* ----- PRESUPUESTO TOTAL ----- */
+        .total-presupuesto {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            margin-top: 1rem;
+        }
+        .total-box {
+            background: white;
+            border-radius: 1rem;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
+            flex: 1;
+            min-width: 140px;
+            text-align: center;
+        }
+        .total-final {
+            background: linear-gradient(135deg, #1d3b4f, #0f2c41);
+            color: white;
+            border-radius: 1rem;
+            padding: 1.2rem;
+            box-shadow: 0 8px 22px rgba(10,26,43,0.3);
+            flex: 1.5;
+            min-width: 200px;
+            text-align: center;
+        }
+
+        /* ----- RECOMENDACIONES ----- */
+        .recomendaciones-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1rem;
+        }
+        .reco-card {
+            background: #f9fbfd;
+            border-radius: 1rem;
+            padding: 1.3rem;
+            border: 1px solid #e6edf6;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.03);
+            transition: all 0.25s;
+        }
+        .reco-card:hover {
+            border-color: #c7d5e9;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+        }
+        .reco-card h4 {
+            font-weight: 650;
+            color: var(--dark-slate);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.95rem;
+        }
+        .reco-card p {
+            font-size: 0.85rem;
+            color: #44566c;
+        }
+
+        /* ----- FOOTER ----- */
+        .footer {
+            background: #f9fbfd;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: #4f6278;
+            border-top: 1px solid #e3eaf3;
+        }
+        .btn-imprimir {
+            background: white;
+            border: 1px solid #c6d6eb;
+            padding: 0.5rem 1.3rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            color: #1e3b5a;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.85rem;
+        }
+        .btn-imprimir:hover {
+            background: #eef4fc;
+            border-color: #9bb1cc;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .cotizacion {
+                box-shadow: none;
+                border-radius: 0;
+            }
+            .btn-imprimir {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cotizacion" id="cotizacion">
+        <!-- HEADER -->
+        <header class="header">
+            <div class="header-content">
+                <div class="header-left">
+                    <h1>🛡️ Cotización Grupo 04</h1>
+                    <div class="tagline">Sistema CCTV PoE · 4 Cámaras · NVR · Análisis de Red</div>
+                </div>
+                <div class="badge">✨ Proyecto Final Grupo 04· Seguridad</div>
+            </div>
+            <div class="meta">
+                <span>🏷️ Ref. RH-CCTV-001</span>
+                <span>📍 Lima, Perú</span>
+                <span>💰 Hasta S/ 3,500 total</span>
+            </div>
+        </header>
+
+        <!-- TOPOLOGÍA: RedGrupo04-->
+        <section class="section">
+            <h2 class="section-title"><span>🌐</span> Topología: RedGrupo04</h2>
+            <div class="topologia-grafica">
+                <div class="network-diagram">
+                    <div class="camaras-group">
+                        <div class="device">
+                            <div class="device-icon">📹</div>
+                            <div class="device-label">Cam 4MP</div>
+                            <div class="device-sub">IR 50m</div>
+                        </div>
+                        <div class="device">
+                            <div class="device-icon">📹</div>
+                            <div class="device-label">Cam 4MP</div>
+                            <div class="device-sub">IR 50m</div>
+                        </div>
+                        <div class="device">
+                            <div class="device-icon">📹</div>
+                            <div class="device-label">Cam 2MP</div>
+                            <div class="device-sub">Básica</div>
+                        </div>
+                        <div class="device">
+                            <div class="device-icon">📹</div>
+                            <div class="device-label">Cam 2MP</div>
+                            <div class="device-sub">Básica</div>
+                        </div>
+                    </div>
+                    <div class="connector"><span class="connector-line"></span></div>
+                    <div class="device" style="border:2px solid #f0b34b; background:#fffef5;">
+                        <div class="device-icon">📼</div>
+                        <div class="device-label">NVR PoE 8ch</div>
+                        <div class="device-sub">Grabación 24/7</div>
+                        <div style="font-size:0.7rem; background:#fff3d6; padding:0.2rem 0.5rem; border-radius:1rem; margin-top:0.3rem;">⚡ 220V</div>
+                    </div>
+                    <div class="connector"><span class="connector-line"></span></div>
+                    <div class="device">
+                        <div class="device-icon">📶</div>
+                        <div class="device-label">Router</div>
+                        <div class="device-sub">Internet</div>
+                    </div>
+                    <div class="connector" style="flex-direction:column; align-items:center;">
+                        <span class="connector-line" style="width:2px; height:20px; margin:2px 0;"></span>
+                        <span style="font-size:0.7rem;">⇢</span>
+                    </div>
+                    <div style="display:flex; gap:0.5rem;">
+                        <div class="device" style="background:#f0f4fe;">
+                            <div class="device-icon">💻</div>
+                            <div class="device-label">PC Ubuntu</div>
+                            <div class="device-sub">Visualización</div>
+                        </div>
+                        <div class="device" style="background:#eef9f6;">
+                            <div class="device-icon">📱</div>
+                            <div class="device-label">Celular</div>
+                            <div class="device-sub">App DMSS</div>
+                        </div>
+                    </div>
+                </div>
+                <p style="font-size:0.8rem; color:#4e627c; margin-top:0.8rem; text-align:center;">✔ 4 cámaras alimentadas por el NVR · Cable CAT6 cobre sólido · PC y celular solo visualizan</p>
+            </div>
+        </section>
+
+        <!-- MATERIALES -->
+        <section class="section">
+            <h2 class="section-title"><span>📦</span> Materiales Cotizados</h2>
+            <div class="tabla-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Ítem</th>
+                            <th>Cant.</th>
+                            <th>Descripción</th>
+                            <th>Unit. (S/)</th>
+                            <th>Subtotal (S/)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>1</td>
+                            <td>🎥 Cámara 4MP IR</td>
+                            <td>2</td>
+                            <td>Hikvision DS-2CD1043G2-LIU / Dahua HFW1439TLED-0360B</td>
+                            <td class="precio">620–680</td>
+                            <td class="subtotal">1,240–1,360</td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>🎥 Cámara 2MP básica</td>
+                            <td>2</td>
+                            <td>Dahua HFW1230TLP / Uniview IPC2122LB-ADF28KM-G</td>
+                            <td class="precio">180–220</td>
+                            <td class="subtotal">360–440</td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>📼 NVR PoE 8ch</td>
+                            <td>1</td>
+                            <td>Dahua NVR4108HS-4KS2/L (PoE) / Hikvision DS-7608NI-Q1/8P</td>
+                            <td class="precio">500–580</td>
+                            <td class="subtotal">500–580</td>
+                        </tr>
+                        <tr>
+                            <td>4</td>
+                            <td>💾 Disco 2TB</td>
+                            <td>1</td>
+                            <td>WD Purple / Seagate SkyHawk</td>
+                            <td class="precio">290–330</td>
+                            <td class="subtotal">290–330</td>
+                        </tr>
+                        <tr>
+                            <td>5</td>
+                            <td>🔌 Cable CAT6</td>
+                            <td>1 lote</td>
+                            <td>100m cobre sólido + 10 conectores RJ45</td>
+                            <td class="precio">150–180</td>
+                            <td class="subtotal">150–180</td>
+                        </tr>
+                        <tr>
+                            <td>6</td>
+                            <td>🧰 Accesorios</td>
+                            <td>1 lote</td>
+                            <td>Canaletas, cajas, tarugos, amarras</td>
+                            <td class="precio">100–150</td>
+                            <td class="subtotal">100–150</td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr class="total-row">
+                            <td colspan="4" style="text-align:right;">📊 Subtotal Materiales</td>
+                            <td colspan="2"><strong>S/ 2,640 – 3,040</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            <div class="opcional-bloque">
+                <span style="font-size:1.5rem;">🔋</span>
+                <div>
+                    <strong>UPS Opcional (recomendado)</strong><br>
+                    <span style="font-size:0.8rem;">Forza FX-1000VA / CDP 1000VA – Protege NVR y router</span>
+                </div>
+                <div class="precio" style="font-weight:700;">+ S/ 220 – 300</div>
+            </div>
+        </section>
+
+        <!-- SERVICIOS DE INSTALACIÓN -->
+        <section class="section">
+            <h2 class="section-title"><span>🔧</span> Servicios de Instalación</h2>
+            <div class="servicios-grid">
+                <div class="servicio-card">
+                    <h4>🧰 Instalación física</h4>
+                    <p>Tendido de cable, montaje de 4 cámaras, canaletas, ponchado RJ45.</p>
+                </div>
+                <div class="servicio-card">
+                    <h4>💻 Preparación PC Ubuntu</h4>
+                    <p>Verificación y migración a Ubuntu LTS para visualización y laboratorio.</p>
+                </div>
+                <div class="servicio-card">
+                    <h4>📱 Configuración NVR + App</h4>
+                    <p>Alta de cámaras, grabación continua, acceso remoto DMSS/Hik-Connect.</p>
+                </div>
+                <div class="servicio-card">
+                    <h4>🌙 Pruebas nocturnas</h4>
+                    <p>Ajuste de ángulos IR para cobertura real del área de cuyes.</p>
+                </div>
+                <div class="servicio-card">
+                    <h4>📊 Preparación análisis red</h4>
+                    <p>Sistema listo para captura de tráfico con Wireshark.</p>
+                </div>
+                <div class="servicio-card">
+                    <h4>📋 Capacitación básica</h4>
+                    <p>Explicación a la abuela y soporte remoto 30 días.</p>
+                </div>
+            </div>
+            <div style="margin-top:1.2rem; background:#f4f9ff; padding:0.8rem 1.2rem; border-radius:1rem; display:flex; align-items:center; gap:1rem; flex-wrap:wrap;">
+                <span style="font-weight:700;">👷 Mano de Obra Total:</span>
+                <span style="font-size:1.4rem; font-weight:700; color:#0f2c41;">S/ 200 – 300</span>
+                <span style="color:#4f6278;">(incluye todos los servicios detallados)</span>
+            </div>
+        </section>
+
+        <!-- PRESUPUESTO TOTAL -->
+        <section class="section">
+            <h2 class="section-title"><span>💰</span> Presupuesto Total del Proyecto</h2>
+            <div class="total-presupuesto">
+                <div class="total-box">
+                    <div style="font-size:0.8rem;">Materiales</div>
+                    <div style="font-size:1.6rem; font-weight:700;">S/ 2,640–3,040</div>
+                </div>
+                <div style="font-size:1.5rem; color:#8aa0bc;">➕</div>
+                <div class="total-box">
+                    <div style="font-size:0.8rem;">Mano de obra</div>
+                    <div style="font-size:1.6rem; font-weight:700;">S/ 200–300</div>
+                </div>
+                <div style="font-size:1.5rem; color:#8aa0bc;">🟰</div>
+                <div class="total-final">
+                    <div style="font-size:0.9rem;">Inversión Total</div>
+                    <div style="font-size:2rem; font-weight:800;">S/ 2,840 – 3,340</div>
+                    <div style="font-size:0.8rem; color:#fadf9e;">✅ Dentro del límite de S/ 3,500</div>
+                </div>
+            </div>
+            <p style="font-size:0.8rem; color:#4f6278; margin-top:0.8rem;">* El costo final depende de los precios exactos de compra y la complejidad de la instalación. Se garantiza no exceder los S/ 3,500.</p>
+        </section>
+
+        <!-- RECOMENDACIONES FINALES -->
+        <section class="section">
+            <h2 class="section-title"><span>💡</span> ¿Por qué esta es la mejor opción?</h2>
+            <div class="recomendaciones-grid">
+                <div class="reco-card">
+                    <h4>🔌 PoE: un solo cable para todo</h4>
+                    <p>Las cámaras reciben datos y energía por el mismo cable CAT6. Sin enchufes cerca de cada cámara, instalación más limpia y segura, y protección centralizada en el NVR.</p>
+                </div>
+                <div class="reco-card">
+                    <h4>📼 NVR PoE dedicado</h4>
+                    <p>Grabación 24/7 sin depender de una PC. El NVR administra las cámaras, las alimenta y las graba de forma continua, incluso si la computadora está apagada.</p>
+                </div>
+                <div class="reco-card">
+                    <h4>🔒 Seguridad y estabilidad</h4>
+                    <p>El cableado físico (Ethernet) no sufre interferencias ni caídas de señal como el WiFi. Las cámaras PoE con cable CAT6 ofrecen conexión estable y sin cortes, ideal para vigilancia nocturna.</p>
+                </div>
+                <div class="reco-card">
+                    <h4>💰 Mejor relación costo‑beneficio</h4>
+                    <p>Las cámaras económicas WiFi suelen fallar justo cuando más se necesitan. Con PoE y NVR, aunque la inversión inicial es ligeramente mayor, se evitan dolores de cabeza y gastos futuros en mantenimiento.</p>
+                </div>
+                <div class="reco-card">
+                    <h4>📱 Acceso remoto sin complicaciones</h4>
+                    <p>El NVR trae app propia (DMSS/Hik-Connect) que permite ver las cámaras desde cualquier lugar, sin configuraciones complejas ni IPs públicas. Ideal para que la abuela revise desde el celular.</p>
+                </div>
+                <div class="reco-card">
+                    <h4>🧠 Preparado para estudio de red</h4>
+                    <p>La arquitectura permite análisis de tráfico con Wireshark sin afectar la grabación. La PC con Ubuntu queda lista como laboratorio para proyectos de seguridad informática.</p>
+                </div>
+            </div>
+            <p style="margin-top:1.2rem; font-size:0.9rem; color:var(--dark-slate); background:#f0f6fe; padding:0.8rem 1.2rem; border-radius:0.8rem;">
+                ✅ <strong>Conclusión:</strong> Esta configuración ofrece vigilancia real, estable y de bajo mantenimiento, pensada para la seguridad de la abuela y la protección de los cuyes, sin depender de WiFi ni de una PC encendida. Además, te permite aprender y experimentar con redes reales.
+            </p>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <div>
+                <strong>📄 Documento Cotización · Grupo 04</strong><br>
+                <span>Proyecto: Redes, CCTV, seguridad · Proyeto Final Autonoma</span>
+            </div>
+            <button class="btn-imprimir" onclick="window.print()">🖨️ Imprimir / PDF</button>
+        </footer>
+    </div>
+
+    <script>
+        window.addEventListener('load', () => {
+            const cot = document.querySelector('.cotizacion');
+            if (cot) {
+                cot.style.opacity = '0';
+                cot.style.transform = 'translateY(10px)';
+                cot.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                requestAnimationFrame(() => {
+                    cot.style.opacity = '1';
+                    cot.style.transform = 'translateY(0)';
+                });
+            }
+        });
+    </script>
+</body>
+</html>
