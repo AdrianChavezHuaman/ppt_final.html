@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grupo 04 · CCTV PoE · Universidad Autónoma del Perú</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ua-orange: #F47920;
+            --ua-blue: #003B5C;
+            --ua-white: #FFFFFF;
+            --ua-light: #F9F9F9;
+            --ua-dark: #222;
+            --ua-gray: #5F6B7A;
+            --shadow-soft: 0 20px 40px rgba(0, 0, 0, 0.08);
+            --shadow-strong: 0 25px 50px rgba(0, 0, 0, 0.15);
+            --radius-xl: 2.5rem;
+            --radius-lg: 2rem;
+            --radius-md: 1.2rem;
+            --transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1.2);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: #E9ECF1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
+            overflow-x: hidden;
+        }
+        .presentation-container {
+            width: 100%;
+            max-width: 1200px;
+            height: 85vh;
+            min-height: 650px;
+            background: var(--ua-white);
+            border-radius: var(--radius-xl);
+            box-shadow: var(--shadow-strong);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        /* Fondo de partículas */
+        .particles {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+        /* Slides wrapper */
+        .slides-wrapper {
+            flex: 1;
+            position: relative;
+            z-index: 1;
+        }
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 2rem 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.95) translateX(50px);
+            transition: var(--transition);
+            pointer-events: none;
+            background: var(--ua-white);
+            border-radius: var(--radius-xl);
+        }
+        .slide.active {
+            opacity: 1;
+            transform: scale(1) translateX(0);
+            pointer-events: auto;
+        }
+        .slide.prev {
+            opacity: 0;
+            transform: scale(0.95) translateX(-50px);
+        }
+        /* Fondos especiales */
+        .slide.hero {
+            background: linear-gradient(135deg, #F47920 0%, #E56717 100%);
+            color: white;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .slide.dark {
+            background: var(--ua-blue);
+            color: white;
+        }
+        .slide.light {
+            background: var(--ua-light);
+        }
+        .slide-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .slide.hero .slide-title,
+        .slide.dark .slide-title {
+            color: white;
+        }
+        .slide-subtitle {
+            font-size: 1.3rem;
+            font-weight: 500;
+            opacity: 0.85;
+        }
+        /* Logo UA */
+        .ua-logo {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            z-index: 10;
+            width: 60px;
+            height: 60px;
+        }
+        .ua-logo svg {
+            width: 100%;
+            height: 100%;
+        }
+        .slide.hero .ua-logo {
+            filter: brightness(0) invert(1);
+        }
+        /* Tarjetas */
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+        .card {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1.8rem;
+            box-shadow: var(--shadow-soft);
+            transition: transform 0.3s, box-shadow 0.3s;
+            text-align: center;
+        }
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 50px rgba(0,0,0,0.12);
+        }
+        .card-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+        .card h4 {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: var(--ua-dark);
+        }
+        .card p {
+            font-size: 0.95rem;
+            color: var(--ua-gray);
+        }
+        /* Tabla */
+        .mini-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0 8px;
+        }
+        .mini-table th {
+            background: var(--ua-blue);
+            color: white;
+            padding: 1rem;
+            font-weight: 600;
+            border-radius: var(--radius-md) var(--radius-md) 0 0;
+        }
+        .mini-table td {
+            background: white;
+            padding: 1rem;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            border-radius: var(--radius-md);
+        }
+        /* Topología */
+        .topology {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin: 1.5rem 0;
+        }
+        .topo-device {
+            background: white;
+            border-radius: var(--radius-md);
+            padding: 1rem 1.5rem;
+            box-shadow: var(--shadow-soft);
+            text-align: center;
+            font-weight: 600;
+        }
+        .topo-device .icon {
+            font-size: 2rem;
+        }
+        .connector-arrow {
+            font-size: 2rem;
+            color: var(--ua-orange);
+        }
+        /* Controles */
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 2rem;
+            padding: 1.2rem 2rem;
+            background: white;
+            border-top: 1px solid #eee;
+            z-index: 10;
+        }
+        .nav-btn {
+            background: var(--ua-orange);
+            color: white;
+            border: none;
+            padding: 0.7rem 2rem;
+            border-radius: 3rem;
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 8px 15px rgba(244, 121, 32, 0.3);
+        }
+        .nav-btn:hover {
+            background: #e56717;
+            transform: translateY(-2px);
+        }
+        .nav-btn:disabled {
+            background: #ccc;
+            box-shadow: none;
+            transform: none;
+            cursor: not-allowed;
+        }
+        .dots {
+            display: flex;
+            gap: 0.5rem;
+        }
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ccc;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .dot.active {
+            background: var(--ua-orange);
+            transform: scale(1.4);
+        }
+        @media (max-width: 768px) {
+            .slide {
+                padding: 1.5rem;
+            }
+            .slide-title {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="presentation-container">
+    <!-- Partículas ligeras (solo decoración) -->
+    <canvas class="particles" id="particleCanvas"></canvas>
+
+    <!-- Logo UA en cada slide (absoluto) -->
+    <div class="ua-logo" id="uaLogo">
+        <svg viewBox="0 0 100 100">
+            <circle cx="50" cy="50" r="48" fill="#F47920" stroke="#fff" stroke-width="2"/>
+            <path d="M50 18 L54 38 L74 38 L58 50 L64 70 L50 58 L36 70 L42 50 L26 38 L46 38 Z" fill="#fff"/>
+            <circle cx="50" cy="50" r="14" fill="#F47920"/>
+            <path d="M50 38 L52 48 L62 48 L54 54 L58 62 L50 56 L42 62 L46 54 L38 48 L48 48 Z" fill="#fff"/>
+        </svg>
+    </div>
+
+    <div class="slides-wrapper" id="slidesWrapper">
+        <!-- Slide 0: Portada -->
+        <div class="slide hero active" data-index="0">
+            <div style="position: relative; z-index: 2;">
+                <div style="font-size: 5rem; margin-bottom: 0.5rem;">📹🏠</div>
+                <h1 style="font-size: 3.8rem; font-weight: 800;">Sistema CCTV PoE</h1>
+                <p style="font-size: 2rem;">Vivienda Unifamiliar</p>
+                <p style="font-size: 1.4rem; opacity: 0.9; margin-top: 1rem;">Propuesta Técnica y Presupuesto</p>
+                <div style="margin-top: 2rem; font-size: 1.5rem; font-weight: 700;">Grupo 04</div>
+                <div style="font-size: 1.2rem; opacity: 0.8;">Universidad Autónoma del Perú · Julio 2026</div>
+            </div>
+        </div>
+
+        <!-- Slide 1: Introducción -->
+        <div class="slide" data-index="1">
+            <div class="slide-title"><span>📘</span> Introducción</div>
+            <p style="font-size:1.2rem;">La inseguridad en Lima impulsa la necesidad de videovigilancia eficiente. El sistema CCTV PoE (Power over Ethernet) destaca por su simplicidad y ahorro.</p>
+            <div class="grid-3">
+                <div class="card"><span class="card-icon">🔌</span><h4>PoE</h4><p>Datos + energía en un solo cable.</p></div>
+                <div class="card"><span class="card-icon">🎯</span><h4>Objetivo</h4><p>4 cámaras, NVR PoE, ≤ S/3,500.</p></div>
+                <div class="card"><span class="card-icon">📈</span><h4>Ventaja</h4><p>Más confiable que Wi-Fi o analógico.</p></div>
+            </div>
+        </div>
+
+        <!-- Slide 2: Tecnología PoE -->
+        <div class="slide light" data-index="2">
+            <div class="slide-title"><span>⚡</span> Tecnología PoE</div>
+            <div class="grid-3">
+                <div class="card"><span class="card-icon">🔗</span><h4>Cable único</h4><p>Ethernet transmite datos y electricidad (Bretas et al., 2023).</p></div>
+                <div class="card"><span class="card-icon">🛡️</span><h4>Confiabilidad</h4><p>Menos conexiones = menos fallos (Serna, 2026).</p></div>
+                <div class="card"><span class="card-icon">🏙️</span><h4>Smart</h4><p>Escuelas, residencias y smart cities (Yantas, 2025).</p></div>
+            </div>
+        </div>
+
+        <!-- Slide 3: Comparación -->
+        <div class="slide" data-index="3">
+            <div class="slide-title"><span>📊</span> Comparativa</div>
+            <div style="display:flex; gap:2rem; align-items:center; flex-wrap:wrap;">
+                <div style="flex:1;">
+                    <h3 style="color:var(--ua-blue);">Tradicional</h3>
+                    <ul style="margin-left:1.5rem; font-size:1.1rem;">
+                        <li>Cableado separado</li>
+                        <li>Mayor costo inicial</li>
+                        <li>Mantenimiento caro</li>
+                        <li>Muchos puntos de falla</li>
+                    </ul>
+                </div>
+                <div style="font-size:3rem; color:var(--ua-orange);">VS</div>
+                <div style="flex:1;">
+                    <h3 style="color:var(--ua-orange);">Grupo04 (PoE)</h3>
+                    <ul style="margin-left:1.5rem; font-size:1.1rem;">
+                        <li>CAT6 único</li>
+                        <li>Presupuesto: S/2,840–3,340</li>
+                        <li>Instalación limpia</li>
+                        <li>Sin interferencias Wi-Fi</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 4: Impacto -->
+        <div class="slide light" data-index="4">
+            <div class="slide-title"><span>🏠</span> Impacto en Hogares</div>
+            <div class="grid-3">
+                <div class="card"><span class="card-icon">🔒</span><h4>Privacidad</h4><p>Mecanismos con IA (Yantas, 2025).</p></div>
+                <div class="card"><span class="card-icon">🚁</span><h4>Vistadrone</h4><p>Impacto social positivo (López et al., 2024).</p></div>
+                <div class="card"><span class="card-icon">🧠</span><h4>IA Predictiva</h4><p>Detección en tiempo real (Barragán-Huamán et al., 2023).</p></div>
+            </div>
+        </div>
+
+        <!-- Slide 5: Seguridad y Confianza -->
+        <div class="slide" data-index="5">
+            <div class="slide-title"><span>🤝</span> Seguridad y Confianza</div>
+            <p style="font-size:1.2rem;">La videovigilancia disuade el delito y permite identificar incidentes. El equilibrio entre seguridad y privacidad es clave (Barrientos-Baez et al., 2025).</p>
+            <div style="display:flex; gap:1.5rem; margin-top:1.5rem;">
+                <div class="card" style="flex:1;"><span class="card-icon">📹</span><h4>Prevención</h4><p>Presencia de cámaras disuasoria.</p></div>
+                <div class="card" style="flex:1;"><span class="card-icon">⚖️</span><h4>Equilibrio</h4><p>Perímetro propio, sin invadir vecinos.</p></div>
+            </div>
+        </div>
+
+        <!-- Slide 6: Objetivo y Requisitos -->
+        <div class="slide light" data-index="6">
+            <div class="slide-title"><span>🎯</span> Objetivo del Sistema</div>
+            <div class="grid-3">
+                <div class="card"><span class="card-icon">🚪</span><h4>Accesos</h4><p>Puerta principal y posterior.</p></div>
+                <div class="card"><span class="card-icon">🐹</span><h4>Área sensible</h4><p>Patio y zona de animales.</p></div>
+                <div class="card"><span class="card-icon">📱</span><h4>Remoto</h4><p>App DMSS / Hik-Connect.</p></div>
+            </div>
+            <table class="mini-table" style="margin-top:1.5rem;">
+                <tr><th>Requisito</th><th>Especificación</th></tr>
+                <tr><td>Cámaras</td><td>2× 4MP IR + 2× 2MP</td></tr>
+                <tr><td>Alimentación</td><td>PoE desde NVR</td></tr>
+                <tr><td>Grabador</td><td>NVR 8ch + HDD 2TB</td></tr>
+                <tr><td>Presupuesto</td><td>≤ S/ 3,500</td></tr>
+            </table>
+        </div>
+
+        <!-- Slide 7: Materiales -->
+        <div class="slide" data-index="7">
+            <div class="slide-title"><span>📦</span> Componentes</div>
+            <table class="mini-table">
+                <tr><th>Ítem</th><th>Cant.</th><th>Modelo</th><th>Precio (S/)</th></tr>
+                <tr><td>Cámara 4MP</td><td>2</td><td>Hikvision / Dahua</td><td>620–680 c/u</td></tr>
+                <tr><td>Cámara 2MP</td><td>2</td><td>Dahua / Uniview</td><td>180–220 c/u</td></tr>
+                <tr><td>NVR PoE 8ch</td><td>1</td><td>Dahua / Hikvision</td><td>500–580</td></tr>
+                <tr><td>Disco 2TB</td><td>1</td><td>WD Purple / Seagate</td><td>290–330</td></tr>
+                <tr><td>Cable CAT6</td><td>100m</td><td>+ conectores RJ45</td><td>150–180</td></tr>
+            </table>
+            <p style="margin-top:1rem;"><strong>Subtotal:</strong> S/ 2,640 – 3,040</p>
+        </div>
+
+        <!-- Slide 8: Topología -->
+        <div class="slide light" data-index="8">
+            <div class="slide-title"><span>🌐</span> Topología "RedGrupo04"</div>
+            <div class="topology">
+                <div class="topo-device"><div class="icon">📹</div>Cam 4MP</div>
+                <div class="topo-device"><div class="icon">📹</div>Cam 2MP</div>
+                <div class="connector-arrow">→</div>
+                <div class="topo-device" style="border:3px solid var(--ua-orange);"><div class="icon">📼</div>NVR PoE</div>
+                <div class="connector-arrow">→</div>
+                <div class="topo-device"><div class="icon">📶</div>Router</div>
+                <div class="connector-arrow">→</div>
+                <div class="topo-device"><div class="icon">📱</div>App Móvil</div>
+            </div>
+            <p style="text-align:center; margin-top:1rem;">Alimentación centralizada, acceso remoto, sin interferencias.</p>
+        </div>
+
+        <!-- Slide 9: Presupuesto -->
+        <div class="slide dark" data-index="9">
+            <div class="slide-title" style="color:white;">💰 Presupuesto Total</div>
+            <div style="display:flex; gap:2rem; justify-content:center; flex-wrap:wrap; margin:2rem 0;">
+                <div class="card" style="background:rgba(255,255,255,0.15); color:white;"><div>Materiales</div><div style="font-size:2.5rem; font-weight:800;">S/ 2,640–3,040</div></div>
+                <div class="card" style="background:rgba(255,255,255,0.15); color:white;"><div>Mano de obra</div><div style="font-size:2.5rem; font-weight:800;">S/ 200–300</div></div>
+            </div>
+            <div style="background:white; color:var(--ua-dark); border-radius:1.5rem; padding:1.5rem; text-align:center;">
+                <div style="font-size:1.5rem;">Inversión Total</div>
+                <div style="font-size:3.5rem; font-weight:800; color:var(--ua-orange);">S/ 2,840 – 3,340</div>
+                <div>✅ Dentro del límite de S/ 3,500</div>
+            </div>
+        </div>
+
+        <!-- Slide 10: Servicios -->
+        <div class="slide" data-index="10">
+            <div class="slide-title"><span>🔧</span> Servicios de Instalación</div>
+            <div class="grid-3">
+                <div class="card"><span class="card-icon">🧰</span><h4>Física</h4><p>Tendido de cable, montaje.</p></div>
+                <div class="card"><span class="card-icon">💻</span><h4>PC Ubuntu</h4><p>Visualización + Wireshark.</p></div>
+                <div class="card"><span class="card-icon">📱</span><h4>App</h4><p>Configuración remota.</p></div>
+                <div class="card"><span class="card-icon">🌙</span><h4>Pruebas IR</h4><p>Ajuste nocturno.</p></div>
+                <div class="card"><span class="card-icon">📊</span><h4>Análisis</h4><p>Captura de tráfico.</p></div>
+                <div class="card"><span class="card-icon">📋</span><h4>Capacitación</h4><p>Al usuario + soporte 30d.</p></div>
+            </div>
+        </div>
+
+        <!-- Slide 11: Plan -->
+        <div class="slide light" data-index="11">
+            <div class="slide-title"><span>⏱️</span> Plan de Implementación</div>
+            <table class="mini-table">
+                <tr><th>Fase</th><th>Actividad</th><th>Duración</th></tr>
+                <tr><td>1</td><td>Adquisición</td><td>1–2 días</td></tr>
+                <tr><td>2</td><td>Instalación física</td><td>6–8 h</td></tr>
+                <tr><td>3</td><td>Configuración</td><td>4–6 h</td></tr>
+                <tr><td>4</td><td>Pruebas</td><td>2–3 h</td></tr>
+                <tr><td>5</td><td>Capacitación</td><td>1–2 h</td></tr>
+            </table>
+            <p style="margin-top:1rem;"><strong>Total:</strong> 3–4 días</p>
+        </div>
+
+        <!-- Slide 12: Ventajas -->
+        <div class="slide" data-index="12">
+            <div class="slide-title"><span>✅</span> Ventajas Competitivas</div>
+            <div class="grid-3">
+                <div class="card"><span class="card-icon">🔌</span><h4>Cable único</h4><p>Instalación limpia.</p></div>
+                <div class="card"><span class="card-icon">📼</span><h4>Independiente</h4><p>NVR 24/7 sin PC.</p></div>
+                <div class="card"><span class="card-icon">📶</span><h4>Estable</h4><p>Sin cortes Wi-Fi.</p></div>
+                <div class="card"><span class="card-icon">🔋</span><h4>UPS central</h4><p>Protección única.</p></div>
+                <div class="card"><span class="card-icon">💰</span><h4>Ahorro</h4><p>Bajo mantenimiento.</p></div>
+                <div class="card"><span class="card-icon">🔒</span><h4>Privacidad</h4><p>Datos locales.</p></div>
+            </div>
+        </div>
+
+        <!-- Slide 13: Privacidad -->
+        <div class="slide light" data-index="13">
+            <div class="slide-title"><span>🔒</span> Privacidad y Legalidad</div>
+            <ul style="font-size:1.2rem; margin-left:2rem; line-height:2;">
+                <li>✅ Cámaras solo en perímetro propio.</li>
+                <li>✅ Acceso restringido con contraseña.</li>
+                <li>✅ Sin reconocimiento facial invasivo.</li>
+                <li>✅ Aviso de videovigilancia (opcional).</li>
+            </ul>
+            <p style="margin-top:1.5rem;">Cumple con Corrales Melgarejo (2023) y Yantas (2025).</p>
+        </div>
+
+        <!-- Slide 14: Conclusión -->
+        <div class="slide dark" data-index="14">
+            <div class="slide-title" style="color:white;">📌 Conclusión</div>
+            <p style="font-size:1.2rem; color:white; opacity:0.9;">PoE es la solución costo‑beneficio ideal para videovigilancia residencial en Perú.</p>
+            <div style="display:flex; gap:1.5rem; margin-top:2rem; flex-wrap:wrap;">
+                <div class="card" style="background:rgba(255,255,255,0.2);"><span class="card-icon">💵</span><h4>S/ 2,840–3,340</h4></div>
+                <div class="card" style="background:rgba(255,255,255,0.2);"><span class="card-icon">🏡</span><h4>Protección 24/7</h4></div>
+                <div class="card" style="background:rgba(255,255,255,0.2);"><span class="card-icon">🔮</span><h4>IA y análisis futuro</h4></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controles -->
+    <div class="controls">
+        <button class="nav-btn" id="prevBtn" disabled>◀ Anterior</button>
+        <div class="dots" id="dotsContainer"></div>
+        <button class="nav-btn" id="nextBtn">Siguiente ▶</button>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const slides = document.querySelectorAll('.slide');
+        const totalSlides = slides.length;
+        let currentIndex = 0;
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const dotsContainer = document.getElementById('dotsContainer');
+
+        // Crear dots
+        for (let i = 0; i < totalSlides; i++) {
+            const dot = document.createElement('span');
+            dot.className = 'dot' + (i === 0 ? ' active' : '');
+            dot.dataset.index = i;
+            dot.addEventListener('click', () => goToSlide(i));
+            dotsContainer.appendChild(dot);
+        }
+        const dots = document.querySelectorAll('.dot');
+
+        function updateSlide(newIndex) {
+            if (newIndex < 0 || newIndex >= totalSlides) return;
+            slides.forEach(s => s.classList.remove('active', 'prev'));
+            slides[newIndex].classList.add('active');
+            if (currentIndex !== newIndex) {
+                slides[currentIndex].classList.add('prev');
+            }
+            currentIndex = newIndex;
+            dots.forEach((d, i) => d.classList.toggle('active', i === currentIndex));
+            prevBtn.disabled = (currentIndex === 0);
+            nextBtn.disabled = (currentIndex === totalSlides - 1);
+        }
+
+        function goToSlide(index) {
+            if (index === currentIndex) return;
+            updateSlide(index);
+        }
+
+        prevBtn.addEventListener('click', () => {
+            if (currentIndex > 0) updateSlide(currentIndex - 1);
+        });
+        nextBtn.addEventListener('click', () => {
+            if (currentIndex < totalSlides - 1) updateSlide(currentIndex + 1);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' && currentIndex < totalSlides - 1) updateSlide(currentIndex + 1);
+            if (e.key === 'ArrowLeft' && currentIndex > 0) updateSlide(currentIndex - 1);
+        });
+
+        // Partículas de fondo (canvas simple)
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resizeCanvas() {
+            width = canvas.clientWidth;
+            height = canvas.clientHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.x < 0 || this.x > width) this.speedX *= -1;
+                if (this.y < 0 || this.y > height) this.speedY *= -1;
+            }
+            draw() {
+                ctx.fillStyle = 'rgba(244,121,32,0.15)';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles(count = 50) {
+            particles = [];
+            for (let i = 0; i < count; i++) {
+                particles.push(new Particle());
+            }
+        }
+        initParticles(40);
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, width, height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+        animateParticles();
+
+        // Inicial
+        updateSlide(0);
+    })();
+</script>
+</body>
+</html>
